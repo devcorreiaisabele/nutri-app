@@ -1,4 +1,4 @@
-import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -11,6 +11,8 @@ import {
     View,
 } from 'react-native';
 import { authStyles as style } from '../props/authStyles';
+import { getNutricionistas } from '../src/services/nutricionistaService_1';
+import { getUsuarios } from '../src/services/usuarioService_1';
 
 export default function Login() {
     const [email, setEmail] = useState('');
@@ -18,40 +20,89 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
 
     async function entrar() {
-        if (!email || !senha) {
-            Alert.alert('Atenção', 'Preencha todos os campos!');
+    if (!email || !senha) {
+        Alert.alert('Atenção', 'Preencha todos os campos!');
+        return;
+    }
+
+    setLoading(true);
+
+    try {
+        try {
+            const nutricionistasRaw = await getNutricionistas();
+            const nutricionistas = typeof nutricionistasRaw === 'string'
+                ? JSON.parse(nutricionistasRaw)
+                : nutricionistasRaw;
+            const lista = Array.isArray(nutricionistas) ? nutricionistas : [];
+            const nutricionista = lista.find(
+                (n: any) =>
+                    n.emailProfissional?.toLowerCase() === email.trim().toLowerCase() &&
+                    n.senhaHash === senha
+            );
+
+            if (nutricionista) {
+                await AsyncStorage.setItem('nutricionistaId', nutricionista.idNutri.toString());
+                await AsyncStorage.setItem('nutricionistaNome', nutricionista.nomeCompleto);
+                await AsyncStorage.setItem('nutricionistaEmail', nutricionista.emailProfissional);
+                await AsyncStorage.setItem('nutricionistaPerfil', JSON.stringify(nutricionista));
+                await AsyncStorage.removeItem('usuarioId');
+                Alert.alert('Bem-vinda!', `Olá, ${nutricionista.nomeCompleto}!`);
+                router.replace('./Dashboardnutricionista');
+                return;
+            }
+        } catch (e) {
+            console.log('Erro nutricionista:', e);
+        }
+
+        const usuarios = await getUsuarios();
+        const usuario = usuarios.find(
+            (u: any) =>
+                u.email?.toLowerCase() === email.trim().toLowerCase() &&
+                u.senhaHash === senha
+        );
+
+        if (!usuario) {
+            Alert.alert('Erro', 'Usuário não encontrado ou senha incorreta!');
             return;
         }
 
-        setLoading(true);
+        await AsyncStorage.setItem('usuarioId', usuario.idUser.toString());
+        await AsyncStorage.setItem('usuarioNome', usuario.nomeCompleto);
+        await AsyncStorage.setItem('usuarioEmail', usuario.email);
+        await AsyncStorage.setItem('tipoDieta', usuario.tipoDieta ?? '');
+        await AsyncStorage.setItem('objetivoSaude', usuario.objetivoSaude ?? '');
+        await AsyncStorage.setItem('pesoAtual', usuario.pesoAtual?.toString() ?? '');
+        await AsyncStorage.setItem('altura', usuario.altura?.toString() ?? '');
+        await AsyncStorage.setItem('rotina', usuario.rotinaAtividade ?? '');
+        await AsyncStorage.setItem('pesoMeta', usuario.pesoMeta?.toString() ?? '');
+        await AsyncStorage.removeItem('nutricionistaId');
 
-        try {
-            const response = await axios.get(
-                'https://69e4d882cfa9394db8da703c.mockapi.io/usuarios'
-            );
 
-            const usuarios = response.data;
-
-            const usuario = usuarios.find(
-                (u: any) =>
-                    u.email.toLowerCase() === email.trim().toLowerCase() &&
-                    u.senha === senha
-            );
-
-            if (!usuario) {
-                Alert.alert('Erro', 'Usuário não encontrado ou senha incorreta!');
-                return;
-            }
-
-            Alert.alert('Bem-vindo!', `Olá, ${usuario.nome}!`);
-            router.push('./Receitas?nome=${usuario.nome}');
-        } catch (error) {
-            console.log('Erro:', error);
-            Alert.alert('Erro', 'Não foi possível fazer login. Tente novamente.');
-        } finally {
-            setLoading(false);
+        if (!usuario.tipoDieta || usuario.tipoDieta === 'EMPTY' || usuario.tipoDieta === '') {
+        router.replace('./Preferenciasdieta');
+        return;
         }
+
+        if (!usuario.objetivoSaude || usuario.objetivoSaude === 'EMPTY' || usuario.objetivoSaude === '') {
+        router.replace('./ObjetivosSaude');
+        return;
+        }
+
+        if (!usuario.pesoAtual || usuario.pesoAtual === 0 || !usuario.altura || usuario.altura === 0) {
+        router.replace('./ObjetivosSaude');
+        return;
+        }
+
+Alert.alert('Bem-vindo!', `Olá, ${usuario.nomeCompleto}!`);
+router.replace(`./Receitas?nome=${usuario.nomeCompleto}`);
+
+    } catch (error) {
+        console.log('Erro login:', error);
+        Alert.alert('Erro', 'Não foi possível conectar ao servidor.');
+    } finally {
+        setLoading(false);
     }
+}
 
     return (
         <ImageBackground
@@ -102,7 +153,7 @@ export default function Login() {
 
                     <Text
                         style={style.linkTexto}
-                        onPress={() => router.push('./Cadastro')}
+                        onPress={() => router.push('./TipoDeConta')}
                     >
                         Não tem conta?{' '}
                         <Text style={style.linkDestaque}>Cadastre-se</Text>

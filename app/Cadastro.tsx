@@ -1,4 +1,4 @@
-import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
@@ -11,6 +11,7 @@ import {
     View,
 } from 'react-native';
 import { authStyles as style } from '../props/authStyles';
+import { createUsuario, getUsuarios } from '../src/services/usuarioService_1';
 
 export default function Cadastro() {
     const [nome, setNome] = useState('');
@@ -23,55 +24,75 @@ export default function Cadastro() {
         setBotaoAtivo(
             nome.trim().length > 0 &&
             email.trim().length > 0 &&
-            senha.length > 0
+            senha.length >= 6       
         );
     }, [nome, email, senha]);
 
     async function salvar() {
-        if (!nome || !email || !senha) {
-            Alert.alert('Atenção', 'Preencha todos os campos!');
+    if (!nome || !email || !senha) {
+        Alert.alert('Atenção', 'Preencha todos os campos!');
+        return;
+    }
+
+    if (senha.length < 6) {
+        Alert.alert('Atenção', 'A senha deve ter no mínimo 6 caracteres!');
+        return;
+    }
+
+    setLoading(true);
+
+    try {
+
+
+        const usuarios = await getUsuarios();
+        const emailNormalizado = email.trim().toLowerCase();
+
+        const emailExiste = usuarios.some(
+            (usuario: any) => usuario.email?.toLowerCase() === emailNormalizado
+        );
+
+        if (emailExiste) {
+            Alert.alert('Erro', 'Este e-mail já está cadastrado!');
+            setLoading(false);
             return;
         }
 
-        setLoading(true);
+        await createUsuario({
+    nomeCompleto: nome.trim(),
+    email: emailNormalizado,
+    senhaHash: senha
+});
 
-        try {
-            const data = await axios.get(
-                'https://69e4d882cfa9394db8da703c.mockapi.io/usuarios'
-            );
+const todosUsuarios = await getUsuarios();
+const usuarioCriado = todosUsuarios.find(
+    (u: any) => u.email?.toLowerCase() === emailNormalizado
+);
 
-            const emailBusca = email.trim().toLowerCase();
-            const emailJaCadastrado = data.data.some(
-                (u: { email: string; }) => u.email.toLowerCase() === emailBusca
-            );
+await AsyncStorage.setItem('usuarioId', (usuarioCriado.idUser ?? usuarioCriado.id).toString());
+await AsyncStorage.setItem('usuarioNome', usuarioCriado.nomeCompleto);
+await AsyncStorage.setItem('usuarioEmail', usuarioCriado.email);
 
-            if (emailJaCadastrado) {
-                Alert.alert('Atenção', 'Este e-mail já está cadastrado!');
-                setLoading(false);
-                return;
-            }
+Alert.alert('Sucesso', 'Conta criada com sucesso!');
 
-            const response = await axios.post(
-                'https://69e4d882cfa9394db8da703c.mockapi.io/usuarios',
-                { nome, email, senha }
-            );
+setNome('');
+setEmail('');
+setSenha('');
 
-            console.log('Sucesso:', response.data);
-            Alert.alert('Sucesso!', 'Conta criada com sucesso!');
+router.push('./Preferenciasdieta');
 
-            setNome('');
-            setEmail('');
-            setSenha('');
+    } catch (error) {
 
-            router.push('./');
+        console.log('ERRO COMPLETO:', error);
 
-        } catch (error) {
-            console.log('Erro:', error);
-            Alert.alert('Erro', 'Não foi possível criar a conta. Tente novamente.');
-        } finally {
-            setLoading(false);
-        }
+        Alert.alert(
+            'Erro',
+            'Não foi possível criar a conta.'
+        );
+
+    } finally {
+        setLoading(false);
     }
+}
 
     return (
         <ImageBackground
@@ -111,7 +132,7 @@ export default function Cadastro() {
 
                     <TextInput
                         style={style.input}
-                        placeholder="Senha"
+                        placeholder="Senha (mínimo 6 caracteres)"
                         placeholderTextColor="#999"
                         value={senha}
                         onChangeText={setSenha}
@@ -133,7 +154,7 @@ export default function Cadastro() {
 
                     <Text
                         style={style.linkTexto}
-                        onPress={() => router.back()}
+                        onPress={() => router.replace('./login')}
                     >
                         Já tem conta? <Text style={style.linkDestaque}>Entrar</Text>
                     </Text>

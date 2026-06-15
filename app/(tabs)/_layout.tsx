@@ -6,7 +6,6 @@ export default function LoginScreen() {
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="AlterarEmail" options={{ headerShown: false }} />
       <Stack.Screen name="Alterarmeta" options={{ headerShown: false }} />
-      <Stack.Screen name="AlterarNome" options={{ headerShown: false }} />
       <Stack.Screen name="BuscaReceitas" options={{ headerShown: false }} />
       <Stack.Screen name="Cadastro" options={{ headerShown: false }} />
       <Stack.Screen name="Cadastronutricionista" options={{ headerShown: false }} />
@@ -29,7 +28,6 @@ export default function LoginScreen() {
       <Stack.Screen name="PacientesNutricionista" options={{ headerShown: false }} />
       <Stack.Screen name="Perfil" options={{ headerShown: false }} />
       <Stack.Screen name="PerfilNutricionista" options={{ headerShown: false }} />
-      <Stack.Screen name="Planoalimentar" options={{ headerShown: false }} />
       <Stack.Screen name="Preferenciasdieta" options={{ headerShown: false }} />
       <Stack.Screen name="Receitas" options={{ headerShown: false }} />
       <Stack.Screen name="RedefinirSenha" options={{ headerShown: false }} />
@@ -39,7 +37,6 @@ export default function LoginScreen() {
       <Stack.Screen name="TipoDeConta" options={{ headerShown: false }} />
       <Stack.Screen name="Todasconquistas" options={{ headerShown: false }} />
       <Stack.Screen name="Vincularnutricionista" options={{ headerShown: false }} />
-      <Stack.Screen name="Splashscreen" options={{ headerShown: false }} />
     </Stack>
   );
 }

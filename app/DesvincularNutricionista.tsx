@@ -117,15 +117,6 @@ async function desvincular() {
                 >
                     <Text style={s.btnManterTexto}>Manter Vínculo</Text>
                 </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={s.btnTrocar}
-                    onPress={vincularOutro}
-                    activeOpacity={0.8}
-                >
-                    <MaterialCommunityIcons name="swap-horizontal" size={16} color="#2E7D32" />
-                    <Text style={s.btnTrocarTexto}>Vincular outra nutricionista</Text>
-                </TouchableOpacity>
             </View>
         </View>
     );

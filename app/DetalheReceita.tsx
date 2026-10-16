@@ -288,7 +288,7 @@ const s = StyleSheet.create({
     scroll:         { paddingBottom: 0 },
     heroBox:        { height: 320, position: 'relative' },
     heroImg:        { width: '100%', height: '100%' },
-    heroOverlay:    { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.28)' },
+    heroOverlay:    { ...StyleSheet.absoluteFill, backgroundColor: 'rgba(0,0,0,0.28)' },
     heroHeader:     { position: 'absolute', top: 52, left: 0, right: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 18 },
     btnVoltar:      { width: 36, height: 36, borderRadius: 18, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center' },
     heroHeaderTitulo: { fontSize: 17, fontWeight: '700', color: '#fff' },

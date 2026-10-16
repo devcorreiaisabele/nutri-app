@@ -92,7 +92,7 @@ export default function Receitas() {
                                         onPress={() => router.push({ pathname: './DetalheReceita', params: { id: item.idReceita } })}
                                     >
                                         {item.imagemUrl ? (
-                                            <Image source={{ uri: item.imagemUrl }} style={StyleSheet.absoluteFillObject} resizeMode="cover" />
+                                            <Image source={{ uri: item.imagemUrl }} style={StyleSheet.absoluteFill} resizeMode="cover" />
                                         ) : (
                                             <View style={styles.cardDestaqueBackground} />
                                         )}
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     loadingTexto:            { fontSize: 14, color: '#888' },
     cardsDestaqueContainer:  { paddingHorizontal: 25, gap: CARD_GAP },
     cardDestaque:            { width: CARD_W, height: CARD_H, borderRadius: 32, overflow: 'hidden', backgroundColor: '#A5D6A7' },
-    cardDestaqueBackground:  { ...StyleSheet.absoluteFillObject, backgroundColor: '#4CAF50' },
+    cardDestaqueBackground:  { ...StyleSheet.absoluteFill, backgroundColor: '#4CAF50' },
     tag:                     { position: 'absolute', top: 18, left: 18, flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(46,125,50,0.88)', paddingHorizontal: 13, paddingVertical: 7, borderRadius: 20, gap: 5, zIndex: 10 },
     tagTexto:                { color: '#fff', fontSize: 13, fontWeight: '700' },
     cardDestaqueGradient:    { position: 'absolute', bottom: 0, left: 0, right: 0, height: '52%', justifyContent: 'flex-end', paddingHorizontal: 22, paddingBottom: 26, backgroundColor: 'rgba(0,0,0,0.4)' },

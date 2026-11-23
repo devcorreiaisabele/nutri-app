@@ -123,7 +123,7 @@ export default function VincularNutricionista() {
 
     return (
         <View style={styles.root}>
-            <StatusBar barStyle="dark-content" backgroundColor="#F5F5F5" />
+            <StatusBar barStyle="dark-content"/>
 
             <Modal visible={modalVisivel} transparent animationType="fade" onRequestClose={fecharModal}>
                 <View style={styles.modalOverlay}>

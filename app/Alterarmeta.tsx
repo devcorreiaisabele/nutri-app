@@ -89,7 +89,7 @@ export default function AlterarMeta() {
 
     return (
         <View style={styles.root}>
-            <StatusBar barStyle="dark-content" backgroundColor="#f0f2ee" />
+            <StatusBar barStyle="dark-content"/>
 
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.btnVoltar}>

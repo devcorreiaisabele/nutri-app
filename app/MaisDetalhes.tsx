@@ -1,6 +1,6 @@
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     Modal,
     ScrollView,
@@ -80,7 +80,7 @@ useEffect(() => {
  
     return (
         <View style={styles.root}>
-            <StatusBar barStyle="light-content" backgroundColor="#2E7D32" />
+            <StatusBar barStyle="light-content"/>
  
             <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
  

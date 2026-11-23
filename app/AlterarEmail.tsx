@@ -69,7 +69,7 @@ export default function AlterarEmail() {
             style={s.root}
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
-            <StatusBar barStyle="dark-content" backgroundColor="#F5F5F5" />
+            <StatusBar barStyle="dark-content"/>
 
 
             <View style={s.header}>

@@ -92,7 +92,7 @@ export default function CriarPaciente() {
             style={s.root}
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
-            <StatusBar barStyle="dark-content" backgroundColor="#F5F7F5" />
+            <StatusBar barStyle="dark-content"/>
 
             <View style={s.header}>
                 <TouchableOpacity onPress={() => router.back()} style={s.btnVoltar}>

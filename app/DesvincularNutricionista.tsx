@@ -58,7 +58,7 @@ async function desvincular() {
 
     return (
         <View style={s.root}>
-            <StatusBar barStyle="dark-content" backgroundColor="#F5F5F5" />
+            <StatusBar barStyle="dark-content"/>
 
             <View style={s.header}>
                 <TouchableOpacity style={s.btnVoltar} onPress={() => router.back()}>

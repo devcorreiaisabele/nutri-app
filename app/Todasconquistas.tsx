@@ -100,7 +100,7 @@ export default function TodasConquistas() {
 
     return (
         <View style={s.root}>
-            <StatusBar barStyle="dark-content" backgroundColor="#F5F7F5" />
+            <StatusBar barStyle="dark-content"/>
 
             <View style={s.header}>
                 <TouchableOpacity onPress={() => router.back()} style={s.btnVoltar}>

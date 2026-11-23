@@ -31,7 +31,7 @@ export default function AlterarNome() {
 
     return (
         <View style={styles.root}>
-            <StatusBar barStyle="dark-content" backgroundColor="#F5F5F5" />
+            <StatusBar barStyle="dark-content"/>
 
             <View style={styles.topBar}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.voltarBtn}>

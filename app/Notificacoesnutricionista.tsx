@@ -128,7 +128,7 @@ const minhas = solicitacoes
 
     return (
         <View style={styles.root}>
-            <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+            <StatusBar barStyle="dark-content"/>
 
             <View style={styles.header}>
                 <TouchableOpacity style={styles.btnVoltar} onPress={() => router.back()}>

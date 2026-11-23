@@ -138,7 +138,7 @@ export default function DashboardNutricionista() {
 
     return (
         <View style={styles.root}>
-            <StatusBar barStyle="dark-content" backgroundColor="#F5F7F5" />
+            <StatusBar barStyle="dark-content"/>
 
             {loading ? (
                 <View style={styles.loadingBox}>

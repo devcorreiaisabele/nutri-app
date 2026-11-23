@@ -6,7 +6,6 @@ import {
     ActivityIndicator, ScrollView, StatusBar,
     StyleSheet, Text, TouchableOpacity, View,
 } from 'react-native';
-import { globalStyles as style } from '../props/globalStyles';
 import api from '../src/services/api';
 import { getPlanosByUsuario } from '../src/services/planoService_1';
 
@@ -67,7 +66,7 @@ export default function PlanoAlimentar() {
 
     return (
         <View style={s.root}>
-            <StatusBar barStyle="dark-content" backgroundColor="#F5F7F5" />
+            <StatusBar barStyle="dark-content"/>
             <View style={s.header}>
                 <TouchableOpacity onPress={() => router.back()} style={s.btnVoltar}>
                     <Ionicons name="chevron-back" size={22} color="#1a1a1a" />

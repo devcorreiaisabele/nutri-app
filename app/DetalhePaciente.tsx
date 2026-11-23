@@ -132,7 +132,7 @@ export default function DetalhePaciente() {
 
     return (
         <View style={s.root}>
-            <StatusBar barStyle="dark-content" backgroundColor="#F5F7F5" />
+            <StatusBar barStyle="dark-content"/>
             <View style={s.header}>
                 <TouchableOpacity onPress={() => router.back()} style={s.btnVoltar}>
                     <Ionicons name="chevron-back" size={22} color="#1a1a1a" />

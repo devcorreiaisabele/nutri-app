@@ -116,7 +116,7 @@ const mantendo         = objetivo.includes('manter');
 
     return (
         <View style={styles.root}>
-            <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
+            <StatusBar barStyle="dark-content"/>
 
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.btnVoltar}>

@@ -57,7 +57,7 @@ export default function MetaAtingida() {
 
     return (
         <View style={styles.root}>
-            <StatusBar barStyle="light-content" backgroundColor="#2E7D32" />
+            <StatusBar barStyle="light-content"/>
             <Animated.View style={[styles.trofeuWrapper, { opacity: trofeuOpacity, transform: [{ scale: trofeuScale }] }]}>
                 <View style={styles.trofeuCirculo}>
                     <MaterialCommunityIcons name="trophy-outline" size={52} color="rgba(255,255,255,0.85)" />

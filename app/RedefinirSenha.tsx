@@ -61,7 +61,7 @@ export default function RedefinirSenha() {
             style={s.root}
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
-            <StatusBar barStyle="dark-content" backgroundColor="#EFF4EF" />
+            <StatusBar barStyle="dark-content"/>
 
             <View style={s.header}>
                 <TouchableOpacity style={s.btnVoltar} onPress={() => router.back()}>

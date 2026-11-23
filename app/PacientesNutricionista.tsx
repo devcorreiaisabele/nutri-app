@@ -70,7 +70,7 @@ const filtrados = pacientes.filter(p =>
 
     return (
         <View style={s.root}>
-            <StatusBar barStyle="dark-content" backgroundColor="#F5F7F5" />
+            <StatusBar barStyle="dark-content"/>
 
             <ScrollView
                 contentContainerStyle={s.scroll}

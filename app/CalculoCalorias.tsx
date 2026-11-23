@@ -106,7 +106,7 @@ export default function CalculoCalorias() {
 
     return (
         <View style={styles.root}>
-            <StatusBar barStyle="dark-content" backgroundColor="#F0F7F0" />
+            <StatusBar barStyle="dark-content" />
 
             <View style={styles.topBar}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.voltarBtn}>

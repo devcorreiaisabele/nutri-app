@@ -199,7 +199,7 @@ export default function PerfilNutricionista() {
 
     return (
         <View style={s.root}>
-            <StatusBar barStyle="dark-content" backgroundColor="#F5F7F5" />
+            <StatusBar barStyle="dark-content"/>
 
             <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
                 <Text style={s.headerTitulo}>Meu Perfil</Text>

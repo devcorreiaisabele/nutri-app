@@ -103,7 +103,7 @@ export default function VisualizarDieta() {
 
     return (
         <View style={styles.root}>
-            <StatusBar barStyle="dark-content" backgroundColor="#F5F7F5" />
+            <StatusBar barStyle="dark-content"/>
 
             <View style={styles.header}>
                 <TouchableOpacity style={styles.btnVoltar} onPress={() => router.back()}>

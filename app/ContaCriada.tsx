@@ -49,7 +49,7 @@ export default function ContaCriadaSucesso() {
 
     return (
         <View style={s.root}>
-            <StatusBar barStyle="dark-content" backgroundColor="#F0F7F0" />
+            <StatusBar barStyle="dark-content"/>
 
             <View style={s.corpo}>
 

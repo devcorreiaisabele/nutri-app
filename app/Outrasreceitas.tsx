@@ -1,4 +1,5 @@
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import {
@@ -6,7 +7,9 @@ import {
     StyleSheet, Text, TouchableOpacity, View,
 } from 'react-native';
 import { globalStyles as style } from '../props/globalStyles';
+import { filtrarPorDieta } from '../src/services/filtroDieta';
 import { getReceitas } from '../src/services/receitaService_1';
+import { getUsuarioLogado } from '../src/services/usuarioService_1';
 
 const CATEGORIAS = ['Todos', 'Café da Manhã', 'Lanche', 'Almoço', 'Jantar'];
 
@@ -45,8 +48,19 @@ export default function OutrasReceitas() {
         try {
             setCarregando(true);
             setErro(null);
+
+            let dieta: string | null = null;
+            try {
+                const usuario = await getUsuarioLogado();
+                dieta = usuario?.tipoDieta ?? null;
+                if (dieta) await AsyncStorage.setItem('tipoDieta', dieta);
+            } catch {
+                dieta = await AsyncStorage.getItem('tipoDieta');
+            }
+
             const data = await getReceitas();
-            setReceitas((Array.isArray(data) ? data : []).map(mapearReceita));
+            const lista = Array.isArray(data) ? data : [];
+            setReceitas(filtrarPorDieta(lista, dieta).map(mapearReceita));
         } catch (e: any) {
             setErro('Não foi possível carregar as receitas.');
         } finally {
@@ -60,7 +74,7 @@ export default function OutrasReceitas() {
 
     return (
         <View style={s.root}>
-            <StatusBar barStyle="dark-content" backgroundColor="#F5F7F2" />
+            <StatusBar barStyle="dark-content" />
 
             <View style={s.header}>
                 <TouchableOpacity onPress={() => router.back()} style={s.btnIcone}>

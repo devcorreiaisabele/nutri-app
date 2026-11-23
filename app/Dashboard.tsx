@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { globalStyles as style } from '../props/globalStyles';
+import { ConsumoDia, getConsumoDeHoje } from '../src/services/consumoservice';
 import { getOuCriarPlanoUsuario, getReceitasDoPlano, removerReceitaDoPlano } from '../src/services/planoReceitaService';
 import { getUsuarioById, updateUsuario } from '../src/services/usuarioService_1';
 
@@ -36,13 +37,6 @@ type Perfil = {
     meta_peso: number;
     peso_inicial: number;
     objetivo: string;
-};
-
-type Nutri = {
-    proteina: number;
-    ferro: number;
-    vitB12: number;
-    kcalGasto: number;
 };
 
 type UsuarioApi = {
@@ -68,6 +62,8 @@ const REFEICOES_INICIAL: Refeicao[] = [
     { id: '3', tipo: 'Almoço',        titulo: null, desc: null, imagem: null },
     { id: '4', tipo: 'Jantar',        titulo: null, desc: null, imagem: null },
 ];
+
+const CONSUMO_INICIAL: ConsumoDia = { data: '', calorias: 0, proteinas: 0, carbos: 0, gorduras: 0 };
 
 function calcularProgresso(pesoAtual: number, metaPeso: number, pesoInicial: number): number {
     if (!pesoInicial || pesoInicial === metaPeso) return 0;
@@ -107,6 +103,10 @@ function estimativaGasto(tmb: number, rotina: string): number {
     if (r.includes('atleta')) return Math.round(tmb * 0.7);
     if (r.includes('ativ'))   return Math.round(tmb * 0.5);
     return Math.round(tmb * 0.3);
+}
+
+function arredondar(valor: number): number {
+    return Math.round(valor * 10) / 10;
 }
 
 type CirculoGastoProps = {
@@ -203,13 +203,10 @@ export default function Dashboard() {
     const [modalRemover, setModalRemover] = useState<string | null>(null);
     const [kcalGasto, setKcalGasto]       = useState<number>(0);
     const [loadingPerfil, setLoadingPerfil] = useState(true);
+    const [consumo, setConsumo]           = useState<ConsumoDia>(CONSUMO_INICIAL);
 
     const [perfil, setPerfil] = useState<Perfil>({
         id: null, peso_atual: 0, meta_peso: 0, peso_inicial: 0, objetivo: '',
-    });
-
-    const [nutri] = useState<Nutri>({
-        proteina: 45, ferro: 12, vitB12: 2.4, kcalGasto: 245,
     });
 
     const [metaKcal,  setMetaKcal]  = useState<number>(0);
@@ -246,6 +243,13 @@ export default function Dashboard() {
                         setRefeicoes(refAtualizadas);
                     } catch (e) {
                         console.log('Erro ao carregar receitas do plano:', e);
+                    }
+
+                    try {
+                        const consumoDoDia = await getConsumoDeHoje();
+                        setConsumo(consumoDoDia);
+                    } catch (e) {
+                        console.log('Erro ao carregar consumo do dia:', e);
                     }
 
                   
@@ -323,15 +327,20 @@ export default function Dashboard() {
         }
     };
 
+    const metaCarbos   = metaKcal > 0 ? Math.round((metaKcal * 0.5) / 4) : 250;
+    const metaGorduras = metaKcal > 0 ? Math.round((metaKcal * 0.3) / 9) : 65;
+
+    const consumoVazio = consumo.calorias === 0 && consumo.proteinas === 0 && consumo.carbos === 0 && consumo.gorduras === 0;
+
     const nutrientes = [
-        { label: 'Proteína', valor: nutri.proteina, unidade: 'g',  meta: 80, cor: '#7B1FA2', delay: 0   },
-        { label: 'Ferro',    valor: nutri.ferro,    unidade: 'mg', meta: 18, cor: '#E53935', delay: 150 },
-        { label: 'Vit B12',  valor: nutri.vitB12,   unidade: 'μg', meta: 4,  cor: '#FDD835', delay: 300 },
+        { label: 'Proteína',     valor: arredondar(consumo.proteinas), unidade: 'g', meta: 80,           cor: '#7B1FA2', delay: 0   },
+        { label: 'Carboidratos', valor: arredondar(consumo.carbos),    unidade: 'g', meta: metaCarbos,   cor: '#E53935', delay: 150 },
+        { label: 'Gorduras',     valor: arredondar(consumo.gorduras),  unidade: 'g', meta: metaGorduras, cor: '#FDD835', delay: 300 },
     ];
 
     return (
         <View style={styles.root}>
-            <StatusBar barStyle="light-content" backgroundColor="#2E7D32" />
+            <StatusBar barStyle="light-content" />
             <Modal visible={modalRemover !== null} transparent animationType="slide">
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalBox}>
@@ -381,11 +390,14 @@ export default function Dashboard() {
                         {nutrientes.map((n) => (
                             <BarraNutri key={n.label} label={n.label} valor={n.valor} unidade={n.unidade} meta={n.meta} cor={n.cor} delay={n.delay} />
                         ))}
+                        {consumoVazio && (
+                            <Text style={styles.nutriVazio}>Nenhuma receita registrada hoje</Text>
+                        )}
                     </View>
                     <View style={styles.colunaGasto}>
                         <View style={styles.cardGasto}>
-                            <Text style={styles.cardGastoTitulo}>Gasto</Text>
-                            <CirculoGasto valor={kcalGasto} meta={metaGasto} />
+                            <Text style={styles.cardGastoTitulo}>Ingerido</Text>
+                            <CirculoGasto valor={Math.round(consumo.calorias)} meta={metaGasto} />
                         </View>
                         <TouchableOpacity style={styles.cardMais} activeOpacity={0.8} onPress={() => router.push('./MaisDetalhes')}>
                             <Text style={styles.maisBtnTexto}>Mais</Text>
@@ -495,6 +507,7 @@ const styles = StyleSheet.create({
     cardConsumoSub:        { fontSize: 11, color: '#ffffff', marginBottom: 12, lineHeight: 15 },
     nutriItem:             { marginBottom: 10 },
     nutriTexto:            { fontSize: 12, color: '#ffffff', fontWeight: '600', marginBottom: 4 },
+    nutriVazio:            { fontSize: 11, color: 'rgba(255,255,255,0.8)', marginTop: 2 },
     barrinhaFundo:         { height: 5, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 3, overflow: 'hidden' },
     barrinhaAtiva:         { height: 5, borderRadius: 3 },
     colunaGasto:           { flex: 1, gap: 12 },

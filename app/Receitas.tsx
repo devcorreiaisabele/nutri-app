@@ -7,7 +7,9 @@ import {
     StyleSheet, Text, TouchableOpacity, View,
 } from 'react-native';
 import { globalStyles as style } from '../props/globalStyles';
+import { filtrarPorDieta } from '../src/services/filtroDieta';
 import { getReceitas } from '../src/services/receitaService_1';
+import { getUsuarioLogado } from '../src/services/usuarioService_1';
 
 const { width } = Dimensions.get('window');
 const CARD_W   = width * 0.68;
@@ -33,39 +35,54 @@ export default function Receitas() {
     const [nome,     setNome]     = useState('Usuário');
     const [loading,  setLoading]  = useState(true);
 
-    useEffect(() => {
-        async function carregar() {
-            const nomeSalvo = await AsyncStorage.getItem('usuarioNome');
-            if (nomeSalvo) setNome(nomeSalvo);
+   useEffect(() => {
+    async function carregar() {
+        const nomeSalvo = await AsyncStorage.getItem('usuarioNome');
+        if (nomeSalvo) setNome(nomeSalvo);
+
+        try {
+            // 1) Descobre a dieta: API primeiro, AsyncStorage como fallback
+            let dieta: string | null = null;
             try {
-                const dados = await getReceitas();
-                setReceitas(dados);
-            } catch (e) {
-                console.log('Erro ao buscar receitas:', e);
-            } finally {
-                setLoading(false);
+                const usuario = await getUsuarioLogado();
+                dieta = usuario?.tipoDieta ?? null;
+                if (dieta) await AsyncStorage.setItem('tipoDieta', dieta);
+            } catch {
+                dieta = await AsyncStorage.getItem('tipoDieta');
             }
+            const dados = await getReceitas();
+            setReceitas(filtrarPorDieta(dados, dieta));
+        } catch (e) {
+            console.log('Erro ao buscar receitas:', e);
+        } finally {
+            setLoading(false);
         }
-        carregar();
-    }, []);
+    }
+    carregar();
+}, []);
 
     const receitasDestaque = receitas.slice(0, 5);
     const outrasReceitas   = receitas.slice(5);
 
     return (
         <View style={style.container}>
-            <StatusBar barStyle="dark-content" backgroundColor="#F0F7F0" />
+            <StatusBar barStyle="dark-content" />
 
             <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
                 <View style={styles.header}>
-                    <View>
-                        <Text style={style.bemVindo}>Bem-vindo(a), {nome}!</Text>
-                        <Text style={style.tituloPagina}>Receitas</Text>
-                    </View>
-                    <TouchableOpacity style={styles.buscaBtn} activeOpacity={0.8} onPress={() => router.push('./BuscaReceitas')}>
-                        <Ionicons name="search" size={22} color="#333" />
-                    </TouchableOpacity>
-                </View>
+    <View>
+        <Text style={style.bemVindo}>Bem-vindo(a), {nome}!</Text>
+        <Text style={style.tituloPagina}>Receitas</Text>
+    </View>
+    <View style={styles.headerBotoes}>
+        <TouchableOpacity style={styles.buscaBtn} activeOpacity={0.8} onPress={() => router.push('./Lembretes')}>
+            <Ionicons name="notifications-outline" size={22} color="#333" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.buscaBtn} activeOpacity={0.8} onPress={() => router.push('./BuscaReceitas')}>
+            <Ionicons name="search" size={22} color="#333" />
+        </TouchableOpacity>
+    </View>
+</View>
 
                 {loading ? (
                     <View style={styles.loadingBox}>
@@ -208,6 +225,7 @@ const styles = StyleSheet.create({
     buscaBtn:                { width: 50, height: 50, borderRadius: 25, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center', elevation: 5 },
     loadingBox:              { alignItems: 'center', paddingTop: 60 },
     loadingTexto:            { fontSize: 14, color: '#888' },
+    headerBotoes: { flexDirection: 'row', gap: 10 },
     cardsDestaqueContainer:  { paddingHorizontal: 25, gap: CARD_GAP },
     cardDestaque:            { width: CARD_W, height: CARD_H, borderRadius: 32, overflow: 'hidden', backgroundColor: '#A5D6A7' },
     cardDestaqueBackground:  { ...StyleSheet.absoluteFill, backgroundColor: '#4CAF50' },

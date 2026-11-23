@@ -152,7 +152,7 @@ export default function CriarPaciente() {
                         placeholderTextColor="#bbb"
                         value={senha}
                         onChangeText={setSenha}
-                        secureTextEntry={!mostrarSenha}
+                        
                         autoCapitalize="none"
                     />
                     <TouchableOpacity onPress={() => setMostrarSenha(v => !v)} style={s.olhoBtn}>

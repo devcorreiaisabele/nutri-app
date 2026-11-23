@@ -136,7 +136,7 @@ router.push('./Preferenciasdieta');
                         placeholderTextColor="#999"
                         value={senha}
                         onChangeText={setSenha}
-                        secureTextEntry
+                        
                     />
 
                     <TouchableOpacity

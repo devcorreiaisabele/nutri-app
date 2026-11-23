@@ -110,7 +110,7 @@ export default function AlterarEmail() {
                         placeholderTextColor="#bbb"
                         value={senha}
                         onChangeText={setSenha}
-                        secureTextEntry={!verSenha}
+                        
                     />
                     <TouchableOpacity onPress={() => setVerSenha(v => !v)}>
                         <Ionicons

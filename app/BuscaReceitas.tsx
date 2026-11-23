@@ -2,15 +2,15 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Image,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { globalStyles as style } from "../props/globalStyles";
 import { getReceitas } from "../src/services/receitaService_1";
@@ -119,7 +119,7 @@ export default function BuscaReceitas() {
 
   return (
     <View style={style.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#F0F7F0" />
+      <StatusBar barStyle="dark-content" />
 
       <View style={styles.topBar}>
         <TouchableOpacity
@@ -208,7 +208,7 @@ export default function BuscaReceitas() {
                 {item.imagemUrl && (
                   <Image
                     source={{ uri: item.imagemUrl }}
-                    style={StyleSheet.absoluteFillObject}
+                    style={StyleSheet.absoluteFill}
                     resizeMode="cover"
                   />
                 )}

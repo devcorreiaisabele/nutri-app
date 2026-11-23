@@ -234,7 +234,7 @@ export default function CadastroNutricionista() {
                                 placeholderTextColor="#999"
                                 value={senha}
                                 onChangeText={setSenha}
-                                secureTextEntry={!verSenha}
+                                
                             />
                             <TouchableOpacity onPress={() => setVerSenha(v => !v)} style={local.senhaOlho}>
                                 <Ionicons

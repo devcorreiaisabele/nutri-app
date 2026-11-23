@@ -9,6 +9,7 @@ export default function LoginScreen() {
       <Stack.Screen name="AlterarNome" options={{ headerShown: false }} />
       <Stack.Screen name="BuscaReceitas" options={{ headerShown: false }} />
       <Stack.Screen name="Cadastro" options={{ headerShown: false }} />
+      <Stack.Screen name="Lembretes" options={{ headerShown: false }} />
       <Stack.Screen name="Cadastronutricionista" options={{ headerShown: false }} />
       <Stack.Screen name="CalculoCalorias" options={{ headerShown: false }} />
       <Stack.Screen name="ContaCriada" options={{ headerShown: false }} />

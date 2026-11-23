@@ -90,7 +90,7 @@ export default function RedefinirSenha() {
                         placeholderTextColor="#bbb"
                         value={novaSenha}
                         onChangeText={setNovaSenha}
-                        secureTextEntry={!verNova}
+                        
                     />
                     <TouchableOpacity onPress={() => setVerNova(v => !v)}>
                         <Ionicons name={verNova ? 'eye-outline' : 'eye-off-outline'} size={20} color="#bbb" />
@@ -106,7 +106,7 @@ export default function RedefinirSenha() {
                         placeholderTextColor="#bbb"
                         value={confirmar}
                         onChangeText={setConfirmar}
-                        secureTextEntry={!verConfirmar}
+                        
                     />
                     <TouchableOpacity onPress={() => setVerConfirmar(v => !v)}>
                         <Ionicons name={verConfirmar ? 'eye-outline' : 'eye-off-outline'} size={20} color="#bbb" />

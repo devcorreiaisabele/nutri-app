@@ -138,7 +138,7 @@ router.replace(`./Receitas?nome=${usuario.nomeCompleto}`);
                         placeholderTextColor="#999"
                         value={senha}
                         onChangeText={setSenha}
-                        secureTextEntry
+                        secureTextEntry={false}
                     />
 
                     <TouchableOpacity

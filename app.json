@@ -23,7 +23,8 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "proxy": "https://onrender.com"
     },
     "plugins": [
       "expo-router",
@@ -50,3 +51,4 @@
     }
   }
 }
+

@@ -1,9 +1,12 @@
-mport AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
 type ModuloNotificacoes = typeof import('expo-notifications');
 
+const IS_WEB = Platform.OS === 'web';
+
 function carregarModulo(): ModuloNotificacoes | null {
+    if (IS_WEB) return null;
     try {
         return require('expo-notifications') as ModuloNotificacoes;
     } catch (err) {
@@ -29,7 +32,7 @@ const CHAVE = 'lembretesRefeicoes';
 const CANAL = 'refeicoes';
 
 const PADROES: Lembrete[] = [
-    { id: 'cafe',         titulo: 'Café da manhã',  hora: 7,  minuto: 0,  ativo: false, notificacaoId: null },
+    { id: 'cafe',         titulo: 'Café da manhã',   hora: 7,  minuto: 0,  ativo: false, notificacaoId: null },
     { id: 'lanche_manha', titulo: 'Lanche da manhã', hora: 10, minuto: 0,  ativo: false, notificacaoId: null },
     { id: 'almoco',       titulo: 'Almoço',          hora: 12, minuto: 30, ativo: false, notificacaoId: null },
     { id: 'lanche_tarde', titulo: 'Lanche da tarde', hora: 16, minuto: 0,  ativo: false, notificacaoId: null },
@@ -62,6 +65,7 @@ export async function salvarLembretes(lista: Lembrete[]): Promise<void> {
 }
 
 export async function garantirPermissao(): Promise<boolean> {
+    if (IS_WEB) return true;
     if (!Notifications) return false;
     const atual = await Notifications.getPermissionsAsync();
     if (atual.granted) return true;
@@ -80,12 +84,13 @@ async function criarCanalAndroid(): Promise<void> {
             sound: 'default',
         });
     } catch (err) {
-        // Se o canal falhar, o agendamento continua com o canal padrão
         console.warn('Não foi possível criar o canal de notificação:', err);
     }
 }
 
 async function agendar(lembrete: Lembrete): Promise<string> {
+    if (IS_WEB) return `web-${lembrete.id}`;
+
     if (!Notifications) throw new Error('Notificações indisponíveis neste build');
 
     await criarCanalAndroid();
@@ -93,7 +98,7 @@ async function agendar(lembrete: Lembrete): Promise<string> {
     return Notifications.scheduleNotificationAsync({
         content: {
             title: 'Hora da refeição 🍽️',
-            body: Não esqueça do seu ${lembrete.titulo.toLowerCase()} e de registrar no Nutri+.,
+            body: `Não esqueça do seu ${lembrete.titulo.toLowerCase()} e de registrar no Nutri+.`,
             sound: true,
         },
         trigger: {
@@ -105,18 +110,19 @@ async function agendar(lembrete: Lembrete): Promise<string> {
     });
 }
 
+async function cancelar(notificacaoId: string | null): Promise<void> {
+    if (IS_WEB || !Notifications || !notificacaoId) return;
+    await Notifications.cancelScheduledNotificationAsync(notificacaoId);
+}
+
 export async function ativarLembrete(lembrete: Lembrete): Promise<Lembrete> {
-    if (Notifications && lembrete.notificacaoId) {
-        await Notifications.cancelScheduledNotificationAsync(lembrete.notificacaoId);
-    }
+    await cancelar(lembrete.notificacaoId);
     const notificacaoId = await agendar(lembrete);
     return { ...lembrete, ativo: true, notificacaoId };
 }
 
 export async function desativarLembrete(lembrete: Lembrete): Promise<Lembrete> {
-    if (Notifications && lembrete.notificacaoId) {
-        await Notifications.cancelScheduledNotificationAsync(lembrete.notificacaoId);
-    }
+    await cancelar(lembrete.notificacaoId);
     return { ...lembrete, ativo: false, notificacaoId: null };
 }
 
@@ -130,9 +136,3 @@ export async function alterarHorario(lembrete: Lembrete, deltaMinutos: number): 
     if (!atualizado.ativo) return atualizado;
     return ativarLembrete(atualizado);
 }
-
-
-
-
-
-

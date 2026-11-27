@@ -4,13 +4,14 @@ import { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
     Alert,
+    Platform,
     ScrollView,
     StatusBar,
     StyleSheet,
     Switch,
     Text,
     TouchableOpacity,
-    View,
+    View
 } from 'react-native';
 import {
     alterarHorario,
@@ -23,13 +24,12 @@ import {
     salvarLembretes,
 } from '../src/services/lembreteService';
 
-// Quantos minutos o horário muda a cada toque em − ou +
 const PASSO_MINUTOS = 1;
 
 function formatarHorario(hora: number, minuto: number) {
-    const h = hora < 10 ? 0${hora} : ${hora};
-    const m = minuto < 10 ? 0${minuto} : ${minuto};
-    return ${h}:${m};
+    const h = hora < 10 ? `0${hora}` : `${hora}`;
+    const m = minuto < 10 ? `0${minuto}` : `${minuto}`;
+    return `${h}:${m}`;
 }
 
 export default function Lembretes() {
@@ -70,7 +70,7 @@ export default function Lembretes() {
 
     async function handleAlternar(id: string, valor: boolean) {
         if (valor) {
-            if (!notificacoesDisponiveis) {
+            if (!notificacoesDisponiveis && Platform.OS !== 'web') {
                 Alert.alert(
                     'Notificações indisponíveis',
                     'Esta versão do app não tem o módulo de notificações. Gere um novo build do app para usar os lembretes.'
@@ -124,7 +124,7 @@ export default function Lembretes() {
                                 ? 'Nenhum lembrete ativo'
                                 : totalAtivos === 1
                                     ? '1 lembrete ativo'
-                                    : ${totalAtivos} lembretes ativos}
+                                    : `${totalAtivos} lembretes ativos`}
                         </Text>
                     </View>
 
